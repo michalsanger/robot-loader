@@ -118,7 +118,12 @@ class RobotLoader extends Nette\Object
 	public function addDirectory($path)
 	{
 		foreach ((array) $path as $val) {
-			$real = realpath($val);
+			$isInPhar = Nette\Utils\Strings::startsWith($val, 'phar://');
+			if ($isInPhar && is_dir($val)) {
+				$real = $val;
+			} else {
+				$real = realpath($val);
+			}
 			if ($real === FALSE) {
 				throw new Nette\DirectoryNotFoundException("Directory '$val' not found.");
 			}
